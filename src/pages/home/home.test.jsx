@@ -3,17 +3,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { Home } from '.';
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import * as Cookies from 'js-cookie';
-
-const navigateMock = vi.fn();
+import TestWrapper from '../../../__tests__/utils/testWrapper';
 
 describe('Home Page', () => {
-  vi.mock('react-router', () => ({
-    useNavigate() {
-      return navigateMock;
-    },
-  }));
-
   vi.mock('js-cookie', async (importOriginal) => {
     const actual = await importOriginal();
     return {
@@ -24,9 +16,11 @@ describe('Home Page', () => {
 
   it('should have a title called Usuários', async () => {
     render(
-      <QueryClientProvider client={new QueryClient()}>
-        <Home />
-      </QueryClientProvider>,
+      <TestWrapper>
+        <QueryClientProvider client={new QueryClient()}>
+          <Home />
+        </QueryClientProvider>
+      </TestWrapper>,
     );
 
     const title = await screen.findByText('Usuários');
@@ -36,25 +30,15 @@ describe('Home Page', () => {
 
   it('should have a table', async () => {
     render(
-      <QueryClientProvider client={new QueryClient()}>
-        <Home />
-      </QueryClientProvider>,
+      <TestWrapper>
+        <QueryClientProvider client={new QueryClient()}>
+          <Home />
+        </QueryClientProvider>
+      </TestWrapper>,
     );
 
     const table = await screen.findByRole('table');
 
     expect(table).toBeInTheDocument();
-  });
-
-  it('should return to login page if user dont have a active token', async () => {
-    vi.mocked(Cookies.get).mockReturnValue(undefined);
-
-    render(
-      <QueryClientProvider client={new QueryClient()}>
-        <Home />
-      </QueryClientProvider>,
-    );
-
-    expect(navigateMock).toHaveBeenCalledWith('/');
   });
 });

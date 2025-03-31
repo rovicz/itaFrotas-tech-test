@@ -1,26 +1,18 @@
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MenuComponent } from './MenuComponent';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import * as Cookies from 'js-cookie';
-
-vi.mock('js-cookie', async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    get: vi.fn(),
-  };
-});
+import TestWrapper from '../../../__tests__/utils/testWrapper';
 
 describe('MenuComponent', () => {
   it('should open the popover when hovering the email button', async () => {
-    vi.mocked(Cookies.get).mockReturnValue('teste@teste.com');
-
     render(
-      <QueryClientProvider client={new QueryClient()}>
-        <MenuComponent />
-      </QueryClientProvider>,
+      <TestWrapper>
+        <QueryClientProvider client={new QueryClient()}>
+          <MenuComponent />
+        </QueryClientProvider>
+      </TestWrapper>,
     );
 
     const emailButton = screen.getByRole('button', { describedby: 'email-button' });
@@ -29,5 +21,21 @@ describe('MenuComponent', () => {
 
     const popoverContent = await screen.findByText('Sair');
     expect(popoverContent).toBeInTheDocument();
+  });
+
+  it('should logout when clicking the logout button', async () => {
+    render(
+      <TestWrapper>
+        <QueryClientProvider client={new QueryClient()}>
+          <MenuComponent />
+        </QueryClientProvider>
+      </TestWrapper>,
+    );
+
+    const emailButton = screen.getByRole('button', { describedby: 'email-button' });
+    fireEvent.mouseEnter(emailButton);
+
+    const logoutButton = await screen.findByText('Sair');
+    fireEvent.click(logoutButton);
   });
 });

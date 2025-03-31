@@ -43,7 +43,6 @@ describe('Table Component', () => {
 
     const table = await screen.findByRole('table');
 
-    console.log(table);
     expect(table).toBeInTheDocument();
 
     expect(screen.getByText('ID')).toBeInTheDocument();

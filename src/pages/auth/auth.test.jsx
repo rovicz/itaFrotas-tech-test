@@ -19,7 +19,7 @@ describe('Auth Component', () => {
         <Auth />
       </TestWrapper>,
     );
-    // Check if the fields and the button are present in the document
+
     expect(screen.getByTestId('emailInput')).toBeInTheDocument();
     expect(screen.getByTestId('passwordInput')).toBeInTheDocument();
     expect(screen.getByTestId('submitButton')).toBeInTheDocument();
@@ -40,12 +40,10 @@ describe('Auth Component', () => {
     const passwordInput = screen.getByTestId('passwordInput');
     const submitButton = screen.getByTestId('submitButton');
 
-    // Fill in the form fields
     fireEvent.change(emailInput, { target: { value: 'eve.holt@reqres.in' } });
     fireEvent.change(passwordInput, { target: { value: 'cityslicka' } });
     fireEvent.click(submitButton);
 
-    // Check if axios.post was called with the correct data
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(expect.any(String), {
         email: 'eve.holt@reqres.in',
@@ -55,7 +53,6 @@ describe('Auth Component', () => {
   });
 
   it('should log an error to the console when the API returns an error', async () => {
-    // Mock axios to simulate an error response from the API
     const mockErrorResponse = { error: 'Missing password' };
     const error = { response: { data: mockErrorResponse } };
     vi.spyOn(axios, 'post').mockRejectedValueOnce(error);
@@ -70,12 +67,10 @@ describe('Auth Component', () => {
     const passwordInput = screen.getByTestId('passwordInput');
     const submitButton = screen.getByTestId('submitButton');
 
-    // Fill in the form with invalid data (no password)
     fireEvent.change(emailInput, { target: { value: 'peter@klaven.com' } });
     fireEvent.change(passwordInput, { target: { value: '123456' } });
     fireEvent.click(submitButton);
 
-    // Wait for the API call and check if the error was logged to the console
     await waitFor(() => {
       const {
         userData: { error },

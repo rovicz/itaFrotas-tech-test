@@ -12,6 +12,7 @@ import styleAntd from './assets/style/styleAntd.json';
 import { persistor, store } from './store/store.jsx';
 import { router } from './routes/routes.jsx';
 import { GlobalStyle } from './assets/style/globalStyle.jsx';
+import { AuthProvider } from './providers/AuthProvider.jsx';
 
 const client = new QueryClient({
   defaultOptions: {

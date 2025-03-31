@@ -2,17 +2,11 @@
 import React, { useEffect } from 'react';
 
 // antComponents
-import { Button, Form, Input, Layout, Space } from 'antd';
+import { Button, Form, Input, Layout, message, Space } from 'antd';
 
 // store & redux
 import { loginStart } from '../../store/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
-
-// react-router-dom
-import { useNavigate } from 'react-router';
-
-// js-cookies
-import Cookies from 'js-cookie';
 
 // assets (images, styles & more)
 import BackgroundFrotasImage from '../../assets/images/frotas-image.jpg';
@@ -46,10 +40,9 @@ import { useForm, Controller } from 'react-hook-form';
 // password: cityslicka
 
 export const Auth = () => {
-  const token = Cookies.get('token');
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const selector = useSelector((state) => state.userData.userData.token);
+  const { error, isLoading } = useSelector((state) => state.userData);
+  const [messageApi, contextHolder] = message.useMessage();
   const {
     control,
     handleSubmit,
@@ -61,16 +54,18 @@ export const Auth = () => {
   };
 
   useEffect(() => {
-    if (token) {
-      navigate('/home');
-    } else {
-      return;
+    if (!isLoading) {
+      if (error) {
+        messageApi.error('Houve um erro ao tentar fazer o login.');
+        return;
+      }
     }
-  }, [navigate, selector, token]);
+  }, [error, isLoading, messageApi]);
 
   return (
     <StyledLayout>
       <LoginContainer>
+        {contextHolder}
         <LoginImageDisplayBox backgroundimagesrc={BackgroundFrotasImage} />
         <LoginBox>
           <LoginFormBox>
@@ -141,7 +136,12 @@ export const Auth = () => {
                   )}
                 />
               </Form.Item>
-              <StyledButton type="primary" htmlType="submit" data-testid="submitButton">
+              <StyledButton
+                type="primary"
+                htmlType="submit"
+                data-testid="submitButton"
+                disabled={isLoading}
+              >
                 Entrar
               </StyledButton>
             </StyledForm>
